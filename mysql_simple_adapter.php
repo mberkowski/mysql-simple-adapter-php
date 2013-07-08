@@ -101,6 +101,14 @@ else {
 	function mysql_errno($link = NULL) {
 		return mysqli_errno(mysql_adapter_get_conneection($link));
 	}
+
+	function mysql_close($link = NULL) {
+		return mysqli_close(mysql_adapter_get_conneection($link));
+	}
+
+	function mysql_free_result($result) {
+		return mysqli_free_result($result);
+	}
 }
 // vim: set ft=php ts=2 sw=2 sts=2 noexpandtab:
 ?>

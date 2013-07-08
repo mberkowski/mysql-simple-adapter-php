@@ -10,7 +10,12 @@ code to make use of PDO or MySQLi via prepared statements.
 
 I can't stress it enough - this should only be used as a stopgap or last resort.
 It depends on setting up a global state to mimic `ext/mysql` behavior that I
-don't care for :(
+don't care for :( It is no more secure than using `ext/mysql`, since it is only
+capable of handling queries constructed via string manipulation. It offers
+_none_ of the benefits of [MySQLi prepared
+statements](http://php.net/manual/en/mysqli.prepare.php). All it does is
+sidestep the deprecation of `ext/mysql`.
+
 
 ##Usage
 Include `mysql_simple_adapter.php` into your code. It expects that `ext/mysql`
