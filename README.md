@@ -16,6 +16,29 @@ _none_ of the benefits of [MySQLi prepared
 statements](http://php.net/manual/en/mysqli.prepare.php). All it does is
 sidestep the deprecation of `ext/mysql`.
 
+##What is implemented
+
+This adapter only implements a subset of `mysql_*()` functions. Basically, if I
+have needed it, it's been implemented so the more exotic functions like
+`mysql_get_proto_info()` are probably not present.
+
+To find out what your application is currently using, you may run the following
+from a Unix command line:
+
+    find /path/to/your/app -name "*.php" -exec egrep -o "mysql_\w+" {} \; | sort
+ | uniq
+
+    # Prints a list of functions like:
+    mysql_connect
+    mysql_data_seek
+    mysql_errno
+    mysql_error
+    mysql_fetch_array
+    mysql_insert_id
+    mysql_num_rows
+    mysql_query
+    mysql_select_db
+
 
 ##Usage
 Include `mysql_simple_adapter.php` into your code. It expects that `ext/mysql`

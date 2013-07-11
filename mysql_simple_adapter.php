@@ -15,8 +15,23 @@ else {
 	define('MYSQL_NUM', 2);
 	define('MYSQL_BOTH', 3);
 
-	function mysql_connect($host = NULL, $user = NULL, $passwd = NULL, $dbname = NULL) {
-		$conn = mysqli_connect($host, $user, $passwd, $dbname);
+	/**
+	 * Wraps mysqli_connect()
+	 * 
+	 * @param mixed $host 
+	 * @param mixed $user 
+	 * @param mixed $passwd 
+	 * @param bool $new_link Re-use existing connection or establish a new link?
+	 * @param mixed $client_flags NoOp For compatibility - MySQLi 
+	 * @access public
+	 * @return bool
+	 */
+	function mysql_connect($host = NULL, $user = NULL, $passwd = NULL, $new_link = FALSE, $client_flags = NULL) {
+		// Return existing global link if defined and input params are the same
+		if (!$new_link && $GLOBALS['mysql_simple_adapter_global_link'] instanceof mysqli) {
+			return $GLOBALS['mysql_simple_adapter_global_link'];
+		}
+		$conn = mysqli_connect($host, $user, $passwd);
 		if (!isset($GLOBALS['mysql_simple_adapter_global_link'])) {
 			$GLOBALS['mysql_simple_adapter_global_link'] = $conn;
 		}
@@ -39,6 +54,12 @@ else {
 	function mysql_insert_id($link = NULL) {
 		return mysqli_insert_id(mysql_adapter_get_conneection($link));
 	}
+	function mysql_num_rows($result) {
+		return mysqli_num_rows($result);
+	}
+	function mysql_data_seek($result, $offset = 0) {
+		return mysqli_data_seek($result, (int)$offset);
+	}
 
 	function mysql_real_escape_string($string, $link = NULL) {
 		return mysqli_real_escape_string(mysql_adapter_get_conneection($link), $string);
@@ -48,17 +69,17 @@ else {
 		return mysqli_real_escape_string(mysql_adapter_get_conneection(), $string);
 	}
 
-	function mysql_fetch_array($resource, $resulttype = MYSQL_BOTH) {
+	function mysql_fetch_array($result, $resulttype = MYSQL_BOTH) {
 		switch ($resulttype) {
 			case MYSQL_ASSOC: $mysqli_type = MYSQLI_ASSOC; break;
 			case MYSQL_NUM: $mysqli_type = MYSQLI_NUM; break;
 			case MYSQL_BOTH:
 			default: $mysqli_type = MYSQLI_BOTH; break;
 		}
-		return mysqli_fetch_array($resource, $mysqli_type);
+		return mysqli_fetch_array($result, $mysqli_type);
 	}
-	function mysql_fetch_assoc($resource) {
-		return mysql_fetch_array($resource, MYSQL_ASSOC);
+	function mysql_fetch_assoc($result) {
+		return mysql_fetch_array($result, MYSQL_ASSOC);
 	}
 
 	/**
@@ -96,10 +117,6 @@ else {
 			$err = mysqli_errno(mysql_adapter_get_conneection($link));
 		}
 		return $err;
-	}
-
-	function mysql_errno($link = NULL) {
-		return mysqli_errno(mysql_adapter_get_conneection($link));
 	}
 
 	function mysql_close($link = NULL) {
