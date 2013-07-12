@@ -92,7 +92,8 @@ else {
 	 */
 	function mysql_error($link = NULL) {
 		$err = NULL;
-		if (!empty(mysqli_connect_error())) {
+		$err = mysqli_connect_error();
+		if (!empty($err)) {
 			$err = mysqli_connect_error();
 		}
 		else {
@@ -110,7 +111,8 @@ else {
 	 */
 	function mysql_errno($link = NULL) {
 		$err = NULL;
-		if (!empty(mysqli_connect_errno())) {
+		$err = mysqli_connect_errno();
+		if (!empty($err)) {
 			$err = mysqli_connect_errno();
 		}
 		else {

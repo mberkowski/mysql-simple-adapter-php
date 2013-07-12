@@ -16,7 +16,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		mysql_simple_adapter_db_cleanup();
 
 		$conn = mysqli_connect($GLOBALS['DBHOST'], $GLOBALS['DBUSER'], $GLOBALS['DBPASS']);
-		if (!empty(mysqli_connect_errno())) {
+		$connerr = mysqli_connect_errno();
+		if (!empty($connerr)) {
 			throw new Exception('Failed to setup MySQL Simple Adapter databases: ' . mysqli_connect_errno() . ' ' . mysqli_connect_error());
 		}
 		$db1_create_sql = "CREATE DATABASE " . $GLOBALS['DBNAME_DB1'];
@@ -52,7 +53,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	}
 	static public function tearDownAfterClass() {
 		$conn = mysqli_connect($GLOBALS['DBHOST'], $GLOBALS['DBUSER'], $GLOBALS['DBPASS']);
-		if (!empty(mysqli_connect_errno())) {
+		$connerr = mysqli_connect_errno();
+		if (!empty($connerr)) {
 			throw new Exception('Failed to setup MySQL Simple Adapter databases: ' . mysqli_connect_errno() . ' ' . mysqli_connect_error());
 		}
 		foreach (array($GLOBALS['DBNAME_DB1'], $GLOBALS['DBNAME_DB2']) as $dbname) {
