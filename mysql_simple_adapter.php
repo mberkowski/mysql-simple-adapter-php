@@ -128,6 +128,10 @@ else {
 	function mysql_free_result($result) {
 		return mysqli_free_result($result);
 	}
+
+	function mysql_set_charset($charset, $link = NULL) {
+		return mysqli_set_charset(mysql_simple_adapter_global_link($link, $charset));
+	}
 }
 // vim: set ft=php ts=2 sw=2 sts=2 noexpandtab:
 ?>
