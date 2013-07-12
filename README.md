@@ -25,8 +25,7 @@ have needed it, it's been implemented so the more exotic functions like
 To find out what your application is currently using, you may run the following
 from a Unix command line:
 
-    find /path/to/your/app -name "*.php" -exec egrep -o "mysql_\w+" {} \; | sort
- | uniq
+    find /path/to/your/app -name "*.php" -exec egrep -o "mysql_\w+" {} \; | sort | uniq
 
     # Prints a list of functions like:
     mysql_connect
@@ -38,6 +37,8 @@ from a Unix command line:
     mysql_num_rows
     mysql_query
     mysql_select_db
+    mysql_set_charset()
+    mysql_client_encoding()
 
 
 ##Usage
