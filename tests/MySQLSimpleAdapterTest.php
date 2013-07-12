@@ -1,7 +1,7 @@
 <?php
 require_once(appdir . 'mysql_simple_adapter.php');
 
-class Test extends \PHPUnit_Framework_TestCase
+class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * Create databases, tables
@@ -24,7 +24,7 @@ class Test extends \PHPUnit_Framework_TestCase
 		$db1_table_sql = "CREATE TABLE db_t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, val VARCHAR(4) NOT NULL)";
 		$db2_table_sql = "CREATE TABLE db_t2 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, val VARCHAR(4) NOT NULL)";
 		$db1_insert_sql = "INSERT INTO db_t1 (val) VALUES ('v1'),('v2'),('v3'),('v4')";
-		$db2_insert_sql = "INSERT INTO db_t2 (val) VALUES ('1v'),('2v'),('3v'),('4v')";
+		$db2_insert_sql = "INSERT INTO db_t2 (val) VALUES ('1v'),('2v'),('3v'),('4v'),('5v')";
 
 		foreach (array($db1_create_sql, $db2_create_sql) as $query) {
 			$res = mysqli_query($conn, $query);
@@ -117,25 +117,116 @@ class Test extends \PHPUnit_Framework_TestCase
 	public function testQueryDefaultConnection() {
 		mysql_select_db($GLOBALS['DBNAME_DB1']);
 		$res = mysql_query("SELECT id, val FROM db_t1 ORDER BY id ASC");
+
+		// db_t1 has 4 fixture rows
+		$this->assertEquals(4, mysql_num_rows($res));
+
 		// Advance to second row, auto-increment is 2, value is v2
 		$row = mysql_fetch_assoc($res);
 		$row = mysql_fetch_assoc($res);
 		$this->assertEquals('v2', $row['val']);
+
+		// Rewind to first row
+		$rew = mysql_data_seek($res, 0);
+		$this->assertTrue($rew);
+		$row = mysql_fetch_assoc($res);
+		$this->assertEquals(1, $row['id']);
+
+		// Fetch assoc already tested
+		// Test numeric & both fetch
+		// Default MYSQL_BOTH - advance to id=2
+		$row = mysql_fetch_array($res);
+		$this->assertEquals(2, $row[0]);
+		$this->assertEquals(2, $row['id']);
+
+		// Specify MYSQL_BOTH - advance to id=2
+		mysql_data_seek($res, 1);
+		$row = mysql_fetch_array($res, MYSQL_BOTH);
+		$this->assertEquals(2, $row[0]);
+		$this->assertEquals(2, $row['id']);
+
+		// Advance to id=3, test MYSQL_NUM
+		// assoc key should be empty
+		$row = mysql_fetch_array($res, MYSQL_NUM);
+		$this->assertEquals(3, $row[0]);
+		$this->assertArrayNotHasKey('id', $row);
+
+		// As MYSQL_ASSOC, should not have numeric key
+		mysql_data_seek($res, 2);
+		$row = mysql_fetch_array($res, MYSQL_ASSOC);
+		$this->assertEquals(3, $row['id']);
+		$this->assertArrayNotHasKey(0, $row);
+
+		// Free the result, verify its num_rows property is now null
+		$this->assertEquals(4, $res->num_rows);
+		mysql_free_result($res);
+		$this->assertNull(@$res->num_rows);
 	}
 	/**
 	 * Verify query by specifying link (other connection)
-	 * 
-	 * @access public
-	 * @return bool
+	 *
+	 * @depends testConnectDefaultConnection
 	 */
 	public function testQueryOtherConnection() {
 		$conn = $GLOBALS['mysql_simple_adapter_other_link'];
 		mysql_select_db($GLOBALS['DBNAME_DB2'], $conn);
 		$res = mysql_query("SELECT id, val FROM db_t2 ORDER BY id ASC", $conn);
+
+		// db_t2 has 5 fixture rows
+		$this->assertEquals(5, mysql_num_rows($res));
+
 		// Advance to second row, auto-increment is 2, value is 2v
 		$row = mysql_fetch_assoc($res);
 		$row = mysql_fetch_assoc($res);
 		$this->assertEquals('2v', $row['val']);
+	}
+	/**
+	 * Test mysql_real_escape_string() and mysql_escape_string()
+	 * 
+	 * @depends testConnectDefaultConnection
+	 */
+	public function testEscaping() {
+		$bad_string = "This string has ' some single quotes ' to escape";
+		$escaped_string = mysql_real_escape_string($bad_string);
+		$this->assertEquals("This string has \' some single quotes \' to escape", $escaped_string);
+
+		// mysql_escape_string() should return the same as mysql_real_escape_string()
+		// since it just wraps it
+		$escaped_string2 = mysql_escape_string($bad_string);
+		$this->assertEquals($escaped_string, $escaped_string2);
+	}
+	/**
+	 * Test mysql_insert_id()
+	 * 
+	 * @depends testConnectDefaultConnection
+	 */
+	public function testInsertId() {
+		// Set auto_increment ahead to 1000 on first db table
+		mysql_query("ALTER TABLE db_t1 AUTO_INCREMENT=1000", $GLOBALS['mysql_simple_adapter_global_link']);
+		// Insert with default connection (row 1000)
+		$res = mysql_query("INSERT INTO db_t1 (id, val) VALUES (NULL, 'v5')");
+		$this->assertEquals(1000, mysql_insert_id());
+
+		// Set second link to 2000 and verify with link specified
+		mysql_query("ALTER TABLE db_t2 AUTO_INCREMENT=2000", $GLOBALS['mysql_simple_adapter_other_link']);
+		$res = mysql_query("INSERT INTO db_t2 (id, val) VALUES (NULL, 'v5')", $GLOBALS['mysql_simple_adapter_other_link']);
+		$this->assertEquals(2000, mysql_insert_id($GLOBALS['mysql_simple_adapter_other_link']));
+	}
+	/**
+	 * Close default connection and specified connection
+	 * 
+	 * @depends testConnectDefaultConnection
+	 */
+	public function testCloseConnections() {
+		// Both connections are still open
+		$this->assertInstanceOf('mysqli', $GLOBALS['mysql_simple_adapter_global_link']);
+		$this->assertInstanceOf('mysqli', $GLOBALS['mysql_simple_adapter_other_link']);
+		// Close both of them
+		$this->assertTrue(mysql_close());
+		$this->assertNull(@$GLOBALS['mysql_simple_adapter_global_link']->server_info);
+
+		$this->assertTrue(mysql_close($GLOBALS['mysql_simple_adapter_other_link']));
+		$this->assertNull(@$GLOBALS['mysql_simple_adapter_other_link']->server_info);
 	}
 }
 // vim: set ts=2 sw=2 sts=2 noexpandtab:
