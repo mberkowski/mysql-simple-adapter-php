@@ -210,6 +210,10 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		$res = mysql_query("INSERT INTO db_t1 (id, val) VALUES (NULL, 'v5')");
 		$this->assertEquals(1000, mysql_insert_id());
 
+		// And verify 1 affected row
+		$affected = mysql_affected_rows($GLOBALS['mysql_simple_adapter_global_link']);
+		$this->assertEquals(1, $affected);
+
 		// Set second link to 2000 and verify with link specified
 		mysql_query("ALTER TABLE db_t2 AUTO_INCREMENT=2000", $GLOBALS['mysql_simple_adapter_other_link']);
 		$res = mysql_query("INSERT INTO db_t2 (id, val) VALUES (NULL, 'v5')", $GLOBALS['mysql_simple_adapter_other_link']);

@@ -57,14 +57,15 @@ else {
 	function mysql_num_rows($result) {
 		return mysqli_num_rows($result);
 	}
+	function mysql_affected_rows($link = NULL) {
+		return mysqli_affected_rows(mysql_adapter_get_conneection($link));
+	}
 	function mysql_data_seek($result, $offset = 0) {
 		return mysqli_data_seek($result, (int)$offset);
 	}
-
 	function mysql_real_escape_string($string, $link = NULL) {
 		return mysqli_real_escape_string(mysql_adapter_get_conneection($link), $string);
 	}
-
 	function mysql_escape_string($string) {
 		return mysqli_real_escape_string(mysql_adapter_get_conneection(), $string);
 	}

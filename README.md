@@ -29,6 +29,7 @@ have needed it, it's been implemented so the more exotic functions like
     mysql_query()
     mysql_insert_id()
     mysql_num_rows()
+    mysql_affected_rows()
     mysql_data_seek()
     mysql_real_escape_string()
     mysql_escape_string()
