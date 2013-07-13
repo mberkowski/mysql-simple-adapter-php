@@ -22,10 +22,37 @@ This adapter only implements a subset of `mysql_*()` functions. Basically, if I
 have needed it, it's been implemented so the more exotic functions like
 `mysql_get_proto_info()` are probably not present.
 
+###Currently implemented functions
+
+    mysql_connect()
+    mysql_select_db()
+    mysql_query()
+    mysql_insert_id()
+    mysql_num_rows()
+    mysql_data_seek()
+    mysql_real_escape_string()
+    mysql_escape_string()
+    mysql_fetch_array()
+    mysql_fetch_assoc()
+    mysql_error()
+    mysql_errno()
+    mysql_close()
+    mysql_free_result()
+    mysql_set_charset()
+    mysql_client_encoding()
+
+
+###Is this sufficient for your application?
+
 To find out what your application is currently using, you may run the following
 from a Unix command line:
 
     find /path/to/your/app -name "*.php" -exec egrep -o "mysql_\w+" {} \; | sort | uniq
+
+If you have PHP files with extensions other than `.php`, add them with `-o -name
+"*.ext"` as many times as necessary, as in:
+
+    find . -name "*.php" -o -name "*.inc" -o -name "*.phwhatever"
 
     # Prints a list of functions like:
     mysql_connect
