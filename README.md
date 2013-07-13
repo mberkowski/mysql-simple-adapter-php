@@ -40,6 +40,7 @@ have needed it, it's been implemented so the more exotic functions like
     mysql_free_result()
     mysql_set_charset()
     mysql_client_encoding()
+    mysql_get_server_info()
 
 
 ###Is this sufficient for your application?

@@ -136,6 +136,10 @@ else {
 	function mysql_client_encoding($link = NULL) {
 		return mysqli_character_set_name(mysql_adapter_get_conneection($link));
 	}
+	
+	function mysql_get_server_info($link = NULL) {
+		return mysqli_get_server_info(mysql_adapter_get_conneection($link));
+	}
 }
 // vim: set ft=php ts=2 sw=2 sts=2 noexpandtab:
 ?>

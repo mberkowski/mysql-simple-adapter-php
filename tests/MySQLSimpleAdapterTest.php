@@ -232,6 +232,13 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($set, $charset);
 	}
 	/**
+	 * @depend testConnectDefaultConnection
+	 */
+	public function testServerInfo() {
+		$info = mysql_get_server_info($GLOBALS['mysql_simple_adapter_global_link']);
+		$this->assertNotEmpty($info);
+	}
+	/**
 	 * Close default connection and specified connection
 	 * 
 	 * @depends testConnectDefaultConnection
