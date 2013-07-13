@@ -62,6 +62,7 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		}
 	}
 	public function tearDown() {
+		// Nothing here...
 	}
 
 	/**
@@ -213,6 +214,22 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		mysql_query("ALTER TABLE db_t2 AUTO_INCREMENT=2000", $GLOBALS['mysql_simple_adapter_other_link']);
 		$res = mysql_query("INSERT INTO db_t2 (id, val) VALUES (NULL, 'v5')", $GLOBALS['mysql_simple_adapter_other_link']);
 		$this->assertEquals(2000, mysql_insert_id($GLOBALS['mysql_simple_adapter_other_link']));
+	}
+	/**
+	 * @depends testConnectDefaultConnection
+	 */
+	public function testCharacterSets() {
+		$charset = mysql_client_encoding($GLOBALS['mysql_simple_adapter_global_link']);
+		$this->assertNotEmpty($charset);
+
+		// Set an exotic new character set
+		$set = 'koi8r';
+		$res = mysql_set_charset($set, $GLOBALS['mysql_simple_adapter_global_link']);
+		$this->assertTrue($res);
+
+		// And verify we can get the same value back
+		$charset = mysql_client_encoding($GLOBALS['mysql_simple_adapter_global_link']);
+		$this->assertEquals($set, $charset);
 	}
 	/**
 	 * Close default connection and specified connection

@@ -130,11 +130,11 @@ else {
 	}
 
 	function mysql_set_charset($charset, $link = NULL) {
-		return mysqli_set_charset(mysql_simple_adapter_global_link($link, $charset));
+		return mysqli_set_charset(mysql_adapter_get_conneection($link), $charset);
 	}
 
 	function mysql_client_encoding($link = NULL) {
-		return mysqli_character_set_name(mysql_simple_adapter_global_link($link));
+		return mysqli_character_set_name(mysql_adapter_get_conneection($link));
 	}
 }
 // vim: set ft=php ts=2 sw=2 sts=2 noexpandtab:
