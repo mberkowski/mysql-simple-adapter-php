@@ -11,9 +11,15 @@ else {
 	$GLOBALS['mysql_simple_adapter_global_link'] = NULL;
 
 	// Const values for ext/mysql
-	define('MYSQL_ASSOC', 1);
-	define('MYSQL_NUM', 2);
-	define('MYSQL_BOTH', 3);
+	// MySQL fetch constants
+	define('MYSQL_ASSOC', MYSQLI_ASSOC);
+	define('MYSQL_NUM', MYSQLI_NUM);
+	define('MYSQL_BOTH', MYSQLI_BOTH);
+	// MySQL client constants
+	define('MYSQL_CLIENT_COMPRESS', MYSQLI_CLIENT_COMPRESS);
+	define('MYSQL_CLIENT_IGNORE_SPACE', MYSQLI_CLIENT_IGNORE_SPACE);
+	define('MYSQL_CLIENT_INTERACTIVE', MYSQLI_CLIENT_INTERACTIVE);
+	define('MYSQL_CLIENT_SSL', MYSQLI_CLIENT_SSL);
 
 	/**
 	 * Wraps mysqli_connect()
@@ -140,6 +146,23 @@ else {
 	
 	function mysql_get_server_info($link = NULL) {
 		return mysqli_get_server_info(mysql_adapter_get_conneection($link));
+	}
+	function mysql_num_fields($result) {
+		return mysqli_num_fields($result);
+	}
+	function mysql_field_name($result, $field_offset) {
+		$col = mysqli_fetch_field_direct($result, $field_offset);
+		if (is_object($col)) {
+			return $col->name;
+		}
+		else return false;
+	}
+	function mysql_field_len($result, $field_offset) {
+		$col = mysqli_fetch_field_direct($result, $field_offset);
+		if (is_object($col)) {
+			return $col->length;
+		}
+		else return false;
 	}
 }
 // vim: set ft=php ts=2 sw=2 sts=2 noexpandtab:

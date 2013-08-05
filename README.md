@@ -42,6 +42,9 @@ have needed it, it's been implemented so the more exotic functions like
     mysql_set_charset()
     mysql_client_encoding()
     mysql_get_server_info()
+    mysql_field_count()
+    mysql_field_name()
+    mysql_field_len()
 
 
 ###Is this sufficient for your application?
@@ -66,8 +69,8 @@ If you have PHP files with extensions other than `.php`, add them with `-o -name
     mysql_num_rows
     mysql_query
     mysql_select_db
-    mysql_set_charset()
-    mysql_client_encoding()
+    mysql_set_charset
+    mysql_client_encoding
 
 
 ##Usage
