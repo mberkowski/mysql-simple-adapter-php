@@ -2,8 +2,10 @@
 
 ##Description
 The MySQL Simple Adapter is a function definition shim intended as a basic,
-probably incomplete adapter between the old deprecated `ext/mysql` extension and
-`ext/mysqli`.
+but incomplete adapter between the old deprecated `ext/mysql` extension and
+`ext/mysqli`. It supplies many commonly used `mysql_*()` functions and aims to
+emulate their behavior exactly or as closely as possible with equivalent
+features of MySQLi.
 
 Use of the adapter **is not recommended**. Instead, it is recommended to update
 code to make use of PDO or MySQLi via prepared statements.
@@ -35,6 +37,7 @@ have needed it, it's been implemented so the more exotic functions like
     mysql_escape_string()
     mysql_fetch_array()
     mysql_fetch_assoc()
+    mysql_result()
     mysql_error()
     mysql_errno()
     mysql_close()
@@ -84,13 +87,15 @@ Since MySQLi requires a link resource object to be passed as the first parameter
 to most functions, whereas `mysql_*()` would use the most recently opened link
 resource if none was supplied, the MySQL Simple Adapter expects by convention
 that the default connection established is stored into a global scope variable
-`$mysql_simple_adapter_global_link`.  If it is not yet defined when the first
-connection is established by the frist call of `mysql_connect()`, it will be
-assigned then. It is recommended to save the connection into that variable:
+whose name begins with `mysql_simple_adapter_global_link_` followed by a hash
+value for uniqueness and obfuscation (you should not mess with it).
+If it is not yet defined when the first connection is established by the 
+first call of `mysql_connect()`, it will be assigned then. Subsequent new
+connections opened will return that global link if the connection parameters are
+identical, and if not a new connection will be established and the global link
+replaced with the new connection so subsequent connections use the last created
+link.
 
-    $mysql_simple_adapter_global_link = mysql_connect('host', 'user', 'pass');
-    // Or more explicitly:
-    $GLOBALS['mysql_simple_adapter_global_link'] = mysql_connect('host', 'user', 'pass');
 
 Then many common `mysql_*()` functions can be called as normal:
 
@@ -107,9 +112,17 @@ Then many common `mysql_*()` functions can be called as normal:
       echo mysql_connect_error();
     }
 
-Note: the `mysql_connect()` wrapper is not smart enough to know or care if it is
+
+##Known Issues
+The `mysql_connect()` wrapper is not smart enough to know or care if it is
 called inside function scope. It always assumes global scope and will set
 that global variable if not already set.
+
+`mysql_connect()` is supposed to ignore its `$new_link` and `$client_flags`
+parameters while SQL Safe Mode is enabled. This is currently not supported
+
+Presently the `$client_flags` parameter to `mysql_connect()` is implemented but
+not yet well tested.
 
 
 ##Alternatives

@@ -12,5 +12,4 @@ function mysql_simple_adapter_db_cleanup() {
 		$res = mysqli_query($conn, "DROP DATABASE IF EXISTS " . $dbname);
 	}
 }
-
 register_shutdown_function('mysql_simple_adapter_db_cleanup');
