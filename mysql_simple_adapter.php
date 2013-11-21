@@ -1,4 +1,5 @@
 <?php
+echo 'hi';
 if (extension_loaded('mysql')) {
 	trigger_error('MySQL Adapter determined the mysql extension is loaded, and we cannot redefine functions', E_USER_ERROR);
 	exit();
@@ -30,8 +31,7 @@ else {
 	 * Returns the MySQL connection resource specified in $link
 	 * or the last resource created if $link is null
 	 * 
-	 * @param mixed $link 
-	 * @access public
+	 * @param MySQLi $link 
 	 * @return bool
 	 */
 	function mysql_adapter_get_conneection($link = null) {
@@ -43,12 +43,11 @@ else {
 	/**
 	 * Wraps mysqli_connect()
 	 * 
-	 * @param mixed $host 
-	 * @param mixed $user 
-	 * @param mixed $passwd 
+	 * @param string $host 
+	 * @param string $user 
+	 * @param string $passwd 
 	 * @param bool $new_link Re-use existing connection or establish a new link?
-	 * @param mixed $client_flags NoOp For compatibility - MySQLi 
-	 * @access public
+	 * @param int $client_flags NoOp For compatibility - MySQLi 
 	 * @return bool
 	 */
 	function mysql_connect($host = null, $user = null, $passwd = null, $new_link = FALSE, $client_flags = null) {
