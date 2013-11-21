@@ -1,5 +1,4 @@
 <?php
-echo 'hi';
 if (extension_loaded('mysql')) {
 	trigger_error('MySQL Adapter determined the mysql extension is loaded, and we cannot redefine functions', E_USER_ERROR);
 	exit();
