@@ -60,7 +60,9 @@ from a Unix command line:
 If you have PHP files with extensions other than `.php`, add them with `-o -name
 "*.ext"` as many times as necessary, as in:
 
-    find . -name "*.php" -o -name "*.inc" -o -name "*.phwhatever"
+    find . -name "*.php" -o -name "*.inc" -o -name "*.phwhatever" -exec egrep -o "mysql_\w+" {} \; | sort | uniq
+
+Called from the root directory of your old `ext/mysql` project, it will return a list of functions.
 
     # Prints a list of functions like:
     mysql_connect
@@ -99,8 +101,8 @@ link.
 
 Then many common `mysql_*()` functions can be called as normal:
 
-    $mysql_simple_adapter_global_link = mysql_connect('host', 'user', 'pass');
-    if ($mysql_simple_adapter) {
+    $link = mysql_connect('host', 'user', 'pass');
+    if ($link) {
       $result = mysql_query('SELECT * FROM yourtable');
       if ($result) {
         while ($row = mysql_fetch_assoc($result)) {
