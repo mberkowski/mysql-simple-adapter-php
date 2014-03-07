@@ -101,19 +101,20 @@ link.
 
 Then many common `mysql_*()` functions can be called as normal:
 
-    $link = mysql_connect('host', 'user', 'pass');
-    if ($link) {
-      $result = mysql_query('SELECT * FROM yourtable');
-      if ($result) {
-        while ($row = mysql_fetch_assoc($result)) {
-          print_r($row);
-        }
-      }
+```php
+$link = mysql_connect('host', 'user', 'pass');
+if ($link) {
+  $result = mysql_query('SELECT * FROM yourtable');
+  if ($result) {
+    while ($row = mysql_fetch_assoc($result)) {
+      print_r($row);
     }
-    else {
-      echo mysql_connect_error();
-    }
-
+  }
+}
+else {
+  echo mysql_connect_error();
+}
+```
 
 ##Known Issues
 The `mysql_connect()` wrapper is not smart enough to know or care if it is
