@@ -1,0 +1,17 @@
+{
+    "name": "mjb/mysql-simple-adapter",
+    "description": "A rudimentary function adaptor between the deprecated ext/mysql (mysql_*() functions) and MySQLi",
+    "authors": [
+        {
+            "name": "Michael Berkowski",
+            "email": "mjb@umn.edu"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": ">=3.7"
+    },
+    "require": {},
+    "autoload": {
+        "files": ["mysql_simple_adapter.php"]
+    }
+}

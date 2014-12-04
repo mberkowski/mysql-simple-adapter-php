@@ -1,3 +1,6 @@
 phpunit.xml
 *.swp
 *~
+composer.lock
+
+/vendor/
