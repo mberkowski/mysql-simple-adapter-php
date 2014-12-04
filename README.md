@@ -79,11 +79,28 @@ Called from the root directory of your old `ext/mysql` project, it will return a
 
 
 ##Usage
+### By simple file inclusion:
 Include `mysql_simple_adapter.php` into your code. It expects that `ext/mysql`
 is not present or enabled, and that `ext/mysqli` _is_ present and enabled. It
 will exit with a fatal error if either of those conditions isn't met.
 
     require_once('mysql_simple_adapter.php');
+
+### Composer
+Add a `repositories` key to point to the GitHub repo. Composer will load this
+file via its `autoload:files` facility and you don't have to do anything else.
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "git@github.umn.edu:mjb/mysql-simple-adapter"
+    }
+],
+"require": {
+    "mjb/mysql-simple-adapter": "*"
+}
+```
 
 Since MySQLi requires a link resource object to be passed as the first parameter
 to most functions, whereas `mysql_*()` would use the most recently opened link
