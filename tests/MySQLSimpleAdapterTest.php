@@ -20,8 +20,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		if (!empty($connerr)) {
 			throw new Exception('Failed to setup MySQL Simple Adapter databases: ' . mysqli_connect_errno() . ' ' . mysqli_connect_error());
 		}
-		$db1_create_sql = "CREATE DATABASE " . $GLOBALS['DBNAME_DB1'];
-		$db2_create_sql = "CREATE DATABASE " . $GLOBALS['DBNAME_DB2'];
+		$db1_create_sql = "CREATE DATABASE " . $GLOBALS['DBNAME_DB1'] . " DEFAULT CHARACTER SET latin1";
+		$db2_create_sql = "CREATE DATABASE " . $GLOBALS['DBNAME_DB2'] . " DEFAULT CHARACTER SET latin1";
 		$db1_table_sql = "CREATE TABLE db_t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, val VARCHAR(4) NOT NULL)";
 		$db2_table_sql = "CREATE TABLE db_t2 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, val VARCHAR(4) NOT NULL)";
 		$db1_insert_sql = "INSERT INTO db_t1 (val) VALUES ('v1'),('v2'),('v3'),('v4')";
@@ -122,6 +122,11 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testQueryDefaultConnection() {
 		mysql_select_db($GLOBALS['DBNAME_DB1']);
+
+		// Enforce latin1 for testing - mysql_field_len() will give 
+		// 3x results for utf8 and we need consistent testing.
+		mysql_query("SET NAMES latin1");
+
 		$res = mysql_query("SELECT id, val FROM db_t1 ORDER BY id ASC");
 
 		// db_t1 has 4 fixture rows
