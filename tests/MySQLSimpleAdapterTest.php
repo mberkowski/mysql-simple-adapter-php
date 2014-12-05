@@ -64,9 +64,12 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	public function tearDown() {
 		// Nothing here...
 	}
+	public function globalLink() {
+		return $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH];
+	}
 
 	/**
-	 * Establish a connection, verify it has written to $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH]
+	 * Establish a connection, verify it has written to $this->globalLink()
 	 * and that it is an instance of mysqli
 	 */
 	public function testConnectDefaultConnection() {
@@ -76,7 +79,7 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		$conn = mysql_connect($GLOBALS['DBHOST'], $GLOBALS['DBUSER'], $GLOBALS['DBPASS']);
 		$this->assertInstanceOf('mysqli', $conn, "mysql_connect() should return an instance of class Mysqli");
 		$this->assertEmpty($conn->error, "On successful connection, error property should be empty");
-		$this->assertInstanceOf('mysqli', $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH], "Global Mysqli instance should have been initialized");
+		$this->assertInstanceOf('mysqli', $this->globalLink(), "Global Mysqli instance should have been initialized");
 
 		// Select a database
 		$ret = mysql_select_db($GLOBALS['DBNAME_DB1']);
@@ -95,7 +98,7 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		
 		// Verify it is a mysqli object and is the same as the global one
 		$this->assertInstanceOf('mysqli', $conn, "A valid Mysqli connection should be returned");
-		$this->assertTrue($conn === $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH], "The returned connection should be the same object reference as the existing global Mysqli");
+		$this->assertTrue($conn === $this->globalLink(), "The returned connection should be the same object reference as the existing global Mysqli");
 	}
 	/**
 	 * @depends testConnectDefaultConnection
@@ -105,7 +108,7 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		
 		// Verify it is a mysqli object and isn't the same as the global one
 		$this->assertInstanceOf('mysqli', $conn, "A valid Mysqli connection should be returned");
-		$this->assertFalse($conn === $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH], "The returned connection should not be the same object reference as the existing global Mysqli");	
+		$this->assertFalse($conn === $this->globalLink(), "The returned connection should not be the same object reference as the existing global Mysqli");	
 
 		// Will need this later...(
 		$GLOBALS['mysql_simple_adapter_other_link'] = $conn;
@@ -242,13 +245,13 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testInsertId() {
 		// Set auto_increment ahead to 1000 on first db table
-		mysql_query("ALTER TABLE db_t1 AUTO_INCREMENT=1000", $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH]);
+		mysql_query("ALTER TABLE db_t1 AUTO_INCREMENT=1000", $this->globalLink());
 		// Insert with default connection (row 1000)
 		$res = mysql_query("INSERT INTO db_t1 (id, val) VALUES (NULL, 'v5')");
 		$this->assertEquals(1000, mysql_insert_id(), "Inserted row's AUTO_INCREMENT id should match expected value'");
 
 		// And verify 1 affected row
-		$affected = mysql_affected_rows($GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH]);
+		$affected = mysql_affected_rows($this->globalLink());
 		$this->assertEquals(1, $affected, "One affected row should be reported");
 
 		// Set second link to 2000 and verify with link specified
@@ -260,23 +263,23 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 * @depends testConnectDefaultConnection
 	 */
 	public function testCharacterSets() {
-		$charset = mysql_client_encoding($GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH]);
+		$charset = mysql_client_encoding($this->globalLink());
 		$this->assertNotEmpty($charset, "Connection should report its default charset, non-empty");
 
 		// Set an exotic new character set
 		$set = 'koi8r';
-		$res = mysql_set_charset($set, $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH]);
+		$res = mysql_set_charset($set, $this->globalLink());
 		$this->assertTrue($res, "Successful setting of charset should return true");
 
 		// And verify we can get the same value back
-		$charset = mysql_client_encoding($GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH]);
+		$charset = mysql_client_encoding($this->globalLink());
 		$this->assertEquals($set, $charset, "Charset reported by connection should match the expected value");
 	}
 	/**
 	 * @depend testConnectDefaultConnection
 	 */
 	public function testServerInfo() {
-		$info = mysql_get_server_info($GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH]);
+		$info = mysql_get_server_info($this->globalLink());
 		$this->assertNotEmpty($info, "Server info string should be non-empty");
 	}
 	/**
@@ -286,11 +289,11 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCloseConnections() {
 		// Both connections are still open
-		$this->assertInstanceOf('mysqli', $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH], "Object should still be a valid Mysqli instance");
+		$this->assertInstanceOf('mysqli', $this->globalLink(), "Object should still be a valid Mysqli instance");
 		$this->assertInstanceOf('mysqli', $GLOBALS['mysql_simple_adapter_other_link'],  "Object should still be a valid Mysqli instance");
 		// Close both of them
 		$this->assertTrue(mysql_close(), "Successful connection close should return true");
-		$this->assertNull(@$GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH]->server_info, "server_info property should be null after closing connection");
+		$this->assertNull(@$this->globalLink()->server_info, "server_info property should be null after closing connection");
 
 		$this->assertTrue(mysql_close($GLOBALS['mysql_simple_adapter_other_link']), "Successful connection close should return true");
 		$this->assertNull(@$GLOBALS['mysql_simple_adapter_other_link']->server_info,  "server_info property should be null after closing connection");
