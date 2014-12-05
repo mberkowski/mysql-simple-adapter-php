@@ -33,7 +33,8 @@ else {
 	 * @param MySQLi $link 
 	 * @return bool
 	 */
-	function mysql_adapter_get_connection($link = null) {
+	function mysql_adapter_get_connection($link = null)
+	{
 		if ($link instanceof mysqli) {
 			return $link;
 		}
@@ -49,7 +50,8 @@ else {
 	 * @param int $client_flags NoOp For compatibility - MySQLi 
 	 * @return bool
 	 */
-	function mysql_connect($host = null, $user = null, $passwd = null, $new_link = FALSE, $client_flags = null) {
+	function mysql_connect($host = null, $user = null, $passwd = null, $new_link = FALSE, $client_flags = null)
+	{
 		// Return existing global link if defined and input params are the same
 		$link_key = 'mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH;
 		$params_key = 'mysql_simple_adapter_global_link_params_' . MYSQL_SIMPLE_ADAPTER_TS_HASH;
@@ -80,32 +82,41 @@ else {
 		}
 		else return false;
 	}
-	function mysql_select_db($dbname, $link = null) {
+	function mysql_select_db($dbname, $link = null)
+	{
 		return mysqli_select_db(mysql_adapter_get_connection($link), $dbname);
 	}
-	function mysql_query($sql, $link = null) {
+	function mysql_query($sql, $link = null)
+	{
 		return mysqli_query(mysql_adapter_get_connection($link), $sql);
 	}
-	function mysql_insert_id($link = null) {
+	function mysql_insert_id($link = null)
+	{
 		return mysqli_insert_id(mysql_adapter_get_connection($link));
 	}
-	function mysql_num_rows($result) {
+	function mysql_num_rows($result)
+	{
 		return mysqli_num_rows($result);
 	}
-	function mysql_affected_rows($link = null) {
+	function mysql_affected_rows($link = null)
+	{
 		return mysqli_affected_rows(mysql_adapter_get_connection($link));
 	}
-	function mysql_data_seek($result, $offset = 0) {
+	function mysql_data_seek($result, $offset = 0)
+	{
 		return mysqli_data_seek($result, (int)$offset);
 	}
-	function mysql_real_escape_string($string, $link = null) {
+	function mysql_real_escape_string($string, $link = null)
+	{
 		return mysqli_real_escape_string(mysql_adapter_get_connection($link), $string);
 	}
-	function mysql_escape_string($string) {
+	function mysql_escape_string($string)
+	{
 		return mysqli_real_escape_string(mysql_adapter_get_connection(), $string);
 	}
 
-	function mysql_fetch_array($result, $resulttype = MYSQL_BOTH) {
+	function mysql_fetch_array($result, $resulttype = MYSQL_BOTH)
+	{
 		switch ($resulttype) {
 			case MYSQL_ASSOC: $mysqli_type = MYSQLI_ASSOC; break;
 			case MYSQL_NUM: $mysqli_type = MYSQLI_NUM; break;
@@ -114,7 +125,8 @@ else {
 		}
 		return mysqli_fetch_array($result, $mysqli_type);
 	}
-	function mysql_fetch_assoc($result) {
+	function mysql_fetch_assoc($result)
+	{
 		return mysql_fetch_array($result, MYSQL_ASSOC);
 	}
 	/**
@@ -127,7 +139,8 @@ else {
 	 * @param int $field 
 	 * @return string|false
 	 */
-	function mysql_result($result, $row, $field = 0) {
+	function mysql_result($result, $row, $field = 0)
+	{
 		// First advance to the correct row
 		if (mysqli_data_seek($result, $row)) {
 			// Loop over fields until the match is found
@@ -178,7 +191,8 @@ else {
 	 * @param MySQLi $link 
 	 * @return string
 	 */
-	function mysql_error($link = null) {
+	function mysql_error($link = null)
+	{
 		$err = null;
 		$err = mysqli_connect_error();
 		if (!empty($err)) {
@@ -197,7 +211,8 @@ else {
 	 * @param MySQLi $link 
 	 * @return string
 	 */
-	function mysql_errno($link = null) {
+	function mysql_errno($link = null)
+	{
 		$err = null;
 		$err = mysqli_connect_errno();
 		if (!empty($err)) {
@@ -209,36 +224,44 @@ else {
 		return $err;
 	}
 
-	function mysql_close($link = null) {
+	function mysql_close($link = null)
+	{
 		return mysqli_close(mysql_adapter_get_connection($link));
 	}
 
-	function mysql_free_result($result) {
+	function mysql_free_result($result)
+	{
 		return mysqli_free_result($result);
 	}
 
-	function mysql_set_charset($charset, $link = null) {
+	function mysql_set_charset($charset, $link = null)
+	{
 		return mysqli_set_charset(mysql_adapter_get_connection($link), $charset);
 	}
 
-	function mysql_client_encoding($link = null) {
+	function mysql_client_encoding($link = null)
+	{
 		return mysqli_character_set_name(mysql_adapter_get_connection($link));
 	}
 	
-	function mysql_get_server_info($link = null) {
+	function mysql_get_server_info($link = null)
+	{
 		return mysqli_get_server_info(mysql_adapter_get_connection($link));
 	}
-	function mysql_num_fields($result) {
+	function mysql_num_fields($result)
+	{
 		return mysqli_num_fields($result);
 	}
-	function mysql_field_name($result, $field_offset) {
+	function mysql_field_name($result, $field_offset)
+	{
 		$col = mysqli_fetch_field_direct($result, $field_offset);
 		if (is_object($col)) {
 			return $col->name;
 		}
 		else return false;
 	}
-	function mysql_field_len($result, $field_offset) {
+	function mysql_field_len($result, $field_offset)
+	{
 		$col = mysqli_fetch_field_direct($result, $field_offset);
 		if (is_object($col)) {
 			return $col->length;

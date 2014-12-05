@@ -10,7 +10,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 * @access protected
 	 * @return void
 	 */
-	static public function setUpBeforeClass() {
+	static public function setUpBeforeClass()
+	{
 		// Why not real fixtures???
 		// Well, eventually, sorry.
 		mysql_simple_adapter_db_cleanup();
@@ -51,7 +52,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		// And ditch the init connection
 		mysqli_close($conn);
 	}
-	static public function tearDownAfterClass() {
+	static public function tearDownAfterClass()
+	{
 		$conn = mysqli_connect($GLOBALS['DBHOST'], $GLOBALS['DBUSER'], $GLOBALS['DBPASS']);
 		$connerr = mysqli_connect_errno();
 		if (!empty($connerr)) {
@@ -61,10 +63,12 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 			$res = mysqli_query($conn, "DROP DATABASE " . $dbname);
 		}
 	}
-	public function tearDown() {
+	public function tearDown()
+	{
 		// Nothing here...
 	}
-	public function globalLink() {
+	public function globalLink()
+	{
 		return $GLOBALS['mysql_simple_adapter_global_link_' . MYSQL_SIMPLE_ADAPTER_TS_HASH];
 	}
 
@@ -72,7 +76,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 * Establish a connection, verify it has written to $this->globalLink()
 	 * and that it is an instance of mysqli
 	 */
-	public function testConnectDefaultConnection() {
+	public function testConnectDefaultConnection()
+	{
 		// Verify the hash constant was defined
 		$this->assertNotEmpty(MYSQL_SIMPLE_ADAPTER_TS_HASH);
 
@@ -93,7 +98,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testConnectDefaultConnection
 	 */
-	public function testConnectOtherReuse() {
+	public function testConnectOtherReuse()
+	{
 		$conn = mysql_connect($GLOBALS['DBHOST'], $GLOBALS['DBUSER'], $GLOBALS['DBPASS']);
 		
 		// Verify it is a mysqli object and is the same as the global one
@@ -103,7 +109,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testConnectDefaultConnection
 	 */
-	public function testConnectOtherConnectionNew() {
+	public function testConnectOtherConnectionNew()
+	{
 		$conn = mysql_connect($GLOBALS['DBHOST'], $GLOBALS['DBUSER'], $GLOBALS['DBPASS'], TRUE);
 		
 		// Verify it is a mysqli object and isn't the same as the global one
@@ -113,7 +120,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		// Will need this later...(
 		$GLOBALS['mysql_simple_adapter_other_link'] = $conn;
 	}
-	public function testConnectErrors() {
+	public function testConnectErrors()
+	{
 		$badconn = @mysql_connect($GLOBALS['DBHOST'], 'baduser', 'badpass', TRUE);
 		$this->assertNotEmpty(mysql_errno($badconn), "An error code should be returned on a faulty connection");
 		$this->assertNotEmpty(mysql_error($badconn), "An error string should be returned on a faulty connection");
@@ -123,7 +131,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 * 
 	 * @depends testConnectDefaultConnection
 	 */
-	public function testQueryDefaultConnection() {
+	public function testQueryDefaultConnection()
+	{
 		mysql_select_db($GLOBALS['DBNAME_DB1']);
 
 		// Enforce latin1 for testing - mysql_field_len() will give 
@@ -210,7 +219,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @depends testConnectDefaultConnection
 	 */
-	public function testQueryOtherConnection() {
+	public function testQueryOtherConnection()
+	{
 		$conn = $GLOBALS['mysql_simple_adapter_other_link'];
 		mysql_select_db($GLOBALS['DBNAME_DB2'], $conn);
 		$res = mysql_query("SELECT id, val FROM db_t2 ORDER BY id ASC", $conn);
@@ -228,7 +238,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 * 
 	 * @depends testConnectDefaultConnection
 	 */
-	public function testEscaping() {
+	public function testEscaping()
+	{
 		$bad_string = "This string has ' some single quotes ' to escape";
 		$escaped_string = mysql_real_escape_string($bad_string);
 		$this->assertEquals("This string has \' some single quotes \' to escape", $escaped_string, "Single quotes should be escaped in the test string");
@@ -243,7 +254,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 * 
 	 * @depends testConnectDefaultConnection
 	 */
-	public function testInsertId() {
+	public function testInsertId()
+	{
 		// Set auto_increment ahead to 1000 on first db table
 		mysql_query("ALTER TABLE db_t1 AUTO_INCREMENT=1000", $this->globalLink());
 		// Insert with default connection (row 1000)
@@ -262,7 +274,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testConnectDefaultConnection
 	 */
-	public function testCharacterSets() {
+	public function testCharacterSets()
+	{
 		$charset = mysql_client_encoding($this->globalLink());
 		$this->assertNotEmpty($charset, "Connection should report its default charset, non-empty");
 
@@ -278,7 +291,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depend testConnectDefaultConnection
 	 */
-	public function testServerInfo() {
+	public function testServerInfo()
+	{
 		$info = mysql_get_server_info($this->globalLink());
 		$this->assertNotEmpty($info, "Server info string should be non-empty");
 	}
@@ -287,7 +301,8 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	 * 
 	 * @depends testConnectDefaultConnection
 	 */
-	public function testCloseConnections() {
+	public function testCloseConnections()
+	{
 		// Both connections are still open
 		$this->assertInstanceOf('mysqli', $this->globalLink(), "Object should still be a valid Mysqli instance");
 		$this->assertInstanceOf('mysqli', $GLOBALS['mysql_simple_adapter_other_link'],  "Object should still be a valid Mysqli instance");
