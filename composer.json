@@ -10,7 +10,10 @@
     "require-dev": {
         "phpunit/phpunit": ">=3.7"
     },
-    "require": {},
+    "require": {
+      "php": ">=5.3",
+      "ext-mysqli": "*"
+    },
     "autoload": {
         "files": ["mysql_simple_adapter.php"]
     }
