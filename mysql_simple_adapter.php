@@ -195,13 +195,8 @@ else {
 	{
 		$err = null;
 		$err = mysqli_connect_error();
-		if (!empty($err)) {
-			$err = mysqli_connect_error();
-		}
-		else {
-			$err = mysqli_error(mysql_adapter_get_connection($link));
-		}
-		return $err;
+
+		return $err ?: mysqli_error(mysql_adapter_get_connection($link));
 	}
 	/**
 	 * Returns most recent errno - if it was issued by mysqli_connect()
@@ -215,13 +210,8 @@ else {
 	{
 		$err = null;
 		$err = mysqli_connect_errno();
-		if (!empty($err)) {
-			$err = mysqli_connect_errno();
-		}
-		else {
-			$err = mysqli_errno(mysql_adapter_get_connection($link));
-		}
-		return $err;
+
+		return $err ?: mysqli_errno(mysql_adapter_get_connection($link));
 	}
 
 	function mysql_close($link = null)
@@ -255,18 +245,12 @@ else {
 	function mysql_field_name($result, $field_offset)
 	{
 		$col = mysqli_fetch_field_direct($result, $field_offset);
-		if (is_object($col)) {
-			return $col->name;
-		}
-		else return false;
+		return is_object($col) ? $col->name : false;
 	}
 	function mysql_field_len($result, $field_offset)
 	{
 		$col = mysqli_fetch_field_direct($result, $field_offset);
-		if (is_object($col)) {
-			return $col->length;
-		}
-		else return false;
+		return is_object($col) ? $col->length : false;
 	}
 }
 // vim: set ft=php ts=2 sw=2 sts=2 noexpandtab:
