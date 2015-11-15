@@ -108,7 +108,7 @@ resource if none was supplied, the MySQL Simple Adapter expects by convention
 that the default connection established is stored into a global scope variable
 whose name begins with `mysql_simple_adapter_global_link_` followed by a hash
 value for uniqueness and obfuscation (you should not mess with it).
-If it is not yet defined when the first connection is established by the 
+If it is not yet defined when the first connection is established by the
 first call of `mysql_connect()`, it will be assigned then. Subsequent new
 connections opened will return that global link if the connection parameters are
 identical, and if not a new connection will be established and the global link
@@ -134,15 +134,21 @@ else {
 ```
 
 ##Known Issues
-The `mysql_connect()` wrapper is not smart enough to know or care if it is
+- The `mysql_connect()` wrapper is not smart enough to know or care if it is
 called inside function scope. It always assumes global scope and will set
 that global variable if not already set.
 
-`mysql_connect()` is supposed to ignore its `$new_link` and `$client_flags`
+- `mysql_connect()` is supposed to ignore its `$new_link` and `$client_flags`
 parameters while SQL Safe Mode is enabled. This is currently not supported
 
-Presently the `$client_flags` parameter to `mysql_connect()` is implemented but
+- Presently the `$client_flags` parameter to `mysql_connect()` is implemented
+  but
 not yet well tested.
+
+- Reliance on PHP functions like `extension_loaded()` will not work. If your
+  application expects to dynamically determine if ext/mysql was present via
+  `extension_loaded()`, you should switch to something like
+  `function_exists('mysql_query')` instead.
 
 
 ##Alternatives
