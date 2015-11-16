@@ -232,6 +232,13 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 		$row = mysql_fetch_assoc($res);
 		$row = mysql_fetch_assoc($res);
 		$this->assertEquals('2v', $row['val'], "Value fetched should match the expected fixture value");
+		$res->close();
+
+		// Unbuffered query
+		$res = mysql_unbuffered_query("SELECT id, val FROM db_t2 ORDER BY id ASC", $conn);
+		$row = $res->fetch_assoc();
+		$this->assertEquals(1, $row['id']);
+		$res->close();
 	}
 	/**
 	 * Test mysql_real_escape_string() and mysql_escape_string()
@@ -295,6 +302,13 @@ class MySQLSimpleAdapterTest extends \PHPUnit_Framework_TestCase
 	{
 		$info = mysql_get_server_info($this->globalLink());
 		$this->assertNotEmpty($info, "Server info string should be non-empty");
+	}
+	/**
+	 * @depend testConnectDefaultConnection
+	 */
+	public function testStat()
+	{
+		$this->assertStringStartsWith("Uptime", mysql_stat($this->globalLink()), "A known string pattern should be returned by mysql_stat()");
 	}
 	/**
 	 * Close default connection and specified connection

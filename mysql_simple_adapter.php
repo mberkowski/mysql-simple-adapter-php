@@ -90,6 +90,10 @@ else {
 	{
 		return mysqli_query(mysql_adapter_get_connection($link), $sql);
 	}
+	function mysql_unbuffered_query($sql, $link = null)
+	{
+		return mysqli_query(mysql_adapter_get_connection($link), $sql, MYSQLI_USE_RESULT);
+	}
 	function mysql_insert_id($link = null)
 	{
 		return mysqli_insert_id(mysql_adapter_get_connection($link));
@@ -237,6 +241,10 @@ else {
 	function mysql_get_server_info($link = null)
 	{
 		return mysqli_get_server_info(mysql_adapter_get_connection($link));
+	}
+	function mysql_stat($link = null)
+	{
+		return mysqli_stat(mysql_adapter_get_connection($link));
 	}
 	function mysql_num_fields($result)
 	{
