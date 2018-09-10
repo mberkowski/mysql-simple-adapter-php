@@ -1,6 +1,6 @@
-#MySQL Simple Adapter
+# MySQL Simple Adapter
 
-##Description
+## Description
 The MySQL Simple Adapter is a function definition shim intended as a basic,
 but incomplete adapter between the old deprecated `ext/mysql` extension and
 `ext/mysqli`. It supplies many commonly used `mysql_*()` functions and aims to
@@ -18,13 +18,13 @@ _none_ of the benefits of [MySQLi prepared
 statements](http://php.net/manual/en/mysqli.prepare.php). All it does is
 sidestep the deprecation of `ext/mysql`.
 
-##What is implemented
+## What is implemented
 
 This adapter only implements a subset of `mysql_*()` functions. Basically, if I
 have needed it, it's been implemented so the more exotic functions like
 `mysql_get_proto_info()` are probably not present.
 
-###Currently implemented functions
+### Currently implemented functions
 
     mysql_connect()
     mysql_select_db()
@@ -52,7 +52,7 @@ have needed it, it's been implemented so the more exotic functions like
     mysql_field_len()
 
 
-###Is this sufficient for your application?
+### Is this sufficient for your application?
 
 To find out what your application is currently using, you may run the following
 from a Unix command line:
@@ -80,7 +80,7 @@ Called from the root directory of your old `ext/mysql` project, it will return a
     mysql_client_encoding
 
 
-##Usage
+## Usage
 ### By simple file inclusion:
 Include `mysql_simple_adapter.php` into your code. It expects that `ext/mysql`
 is not present or enabled, and that `ext/mysqli` _is_ present and enabled. It
@@ -135,7 +135,7 @@ else {
 }
 ```
 
-##Known Issues
+## Known Issues
 - The `mysql_connect()` wrapper is not smart enough to know or care if it is
 called inside function scope. It always assumes global scope and will set
 that global variable if not already set.
@@ -153,10 +153,10 @@ not yet well tested.
   `function_exists('mysql_query')` instead.
 
 
-##Alternatives
-###MySQLi Converter
+## Alternatives
+### MySQLi Converter
 Oracle provides [this MySQLi converter
 script](https://wikis.oracle.com/display/mysql/Converting+to+MySQLi) to modify
 code
 
-###Others?
+### Others?
