@@ -96,7 +96,7 @@ file via its `autoload:files` facility and you don't have to do anything else.
 "repositories": [
     {
         "type": "vcs",
-        "url": "git@github.umn.edu:mjb/mysql-simple-adapter"
+        "url": "git@github.com:mberkowski/mysql-simple-adapter"
     }
 ],
 "require": {
